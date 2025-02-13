@@ -1,4 +1,4 @@
-Nautilus
+Setlist Viewer
 Developed by TrojanNemo
 © 2025
 -------------------
