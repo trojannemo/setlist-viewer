@@ -1,0 +1,14 @@
+Nautilus
+Developed by TrojanNemo
+© 2025
+-------------------
+
+v1.0.1 (first GitHub release)
+- fixed alternating row colors not working when filtering or sorting songs on the main page
+- replaced all text buttons with emoji/icon buttons for a more modern look
+- implemented fix that should reduce font size on lower DPI devices to avoid font being too large by default
+
+----------
+
+v1.0.0 (was not on GitHub yet)
+Initial public release
