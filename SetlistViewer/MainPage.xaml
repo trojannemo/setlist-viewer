@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"             
+             xmlns:helpers="clr-namespace:SetlistViewer.Helpers"
+             x:Class="SetlistViewer.MainPage"  
+            x:Name="MainPageInstance"
+             BackgroundColor="#6CA6CD">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:RowColorConverter x:Key="RowColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="*">
+
+        <Grid Grid.Row="0" BackgroundColor="#F5F5EB" Padding="10" ColumnSpacing="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="30*"/>
+                <ColumnDefinition Width="25*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="lblSetlistViewer" Text="Setlist Viewer"
+               FontSize="22"
+               TextColor="Black"
+                   Grid.Column="0"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+
+            <Label x:Name="lblFileName"
+               Text="(No file loaded)"
+               FontSize="16"
+               TextColor="Gray"
+                   Grid.Column="1"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"/>
+
+            <Label x:Name="lblSongCount"
+               Text="Songs: 0"
+               FontSize="16"
+               TextColor="Gray"
+                   Grid.Column="2"
+               VerticalOptions="Center"
+               HorizontalOptions="End"/>
+
+            <Button x:Name="btnAbout"
+                Text="❓"
+                FontSize="18"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                   Grid.Column="4"                
+                HorizontalOptions="End"
+                Clicked="OnAboutClicked"/>
+        </Grid>
+
+        <Grid Grid.Row="1" BackgroundColor="#F5F5EB" Padding="5">
+            <Grid.ColumnDefinitions>                
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="lblHeaderArtist" Text="Artist" Grid.Column="0" HorizontalTextAlignment="Start" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnHeaderTapped" CommandParameter="Artist"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="lblHeaderTitle" Text="Title" Grid.Column="1" HorizontalTextAlignment="Start" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnHeaderTapped" CommandParameter="Name"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="lblHeaderLength" Text="Length" Grid.Column="2" HorizontalTextAlignment="Center" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnHeaderTapped" CommandParameter="Duration"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="lblHeaderRating" Text="Rating" Grid.Column="3" HorizontalTextAlignment="Center" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnHeaderTapped" CommandParameter="Rating"/>
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+
+        <CollectionView x:Name="listViewSetlist"
+                Grid.Row="2"
+                BackgroundColor="White"
+                SelectionMode="Single"
+                VerticalOptions="FillAndExpand"
+                ItemsUpdatingScrollMode="KeepScrollOffset">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid BackgroundColor="{Binding SongIndex, Converter={StaticResource RowColorConverter}}" Padding="5" BindingContext="{Binding}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnDoubleTapped" CommandParameter="{Binding}" />
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnSingleTapped" CommandParameter="{Binding}" />
+                        </Grid.GestureRecognizers>                       
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35*"/>
+                            <ColumnDefinition Width="35*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label 
+                            LineBreakMode="TailTruncation"
+                            MaxLines="1"
+                            Text="{Binding Artist}" Grid.Column="0" FontSize="16" TextColor="Black" Margin="5"/>
+
+                        <Label 
+                            LineBreakMode="TailTruncation"
+                            MaxLines="1"    
+                            Text="{Binding Name}" Grid.Column="1" FontSize="16" TextColor="Black" Margin="5"/>
+
+                        <Label Text="{Binding Duration}" Grid.Column="2" FontSize="16" TextColor="Black" Margin="5" HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding Rating}" Grid.Column="3" FontSize="16" TextColor="Black" Margin="5" HorizontalTextAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="3" BackgroundColor="#F5F5EB" Padding="5" >
+
+            <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="20*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button x:Name="btnLoadFile"
+            Text="📂"
+            FontSize="18"
+            BackgroundColor="Transparent"
+                    Grid.Column="0"
+            TextColor="Black"
+            HorizontalOptions="Start"
+            Margin="5,0,5,0"
+                Clicked="OnLoadSetlistClicked"/>
+
+            <Button x:Name="btnQueue"
+                 Text="📋"
+                 FontSize="18"
+                 BackgroundColor="Transparent"
+                    Grid.Column="1"
+                 TextColor="Black"
+                 HorizontalOptions="Start"
+                 Margin="5,0,5,0"
+                 Clicked="OnQueueClicked"/>
+
+                <Button x:Name="btnSearch"
+            Text="🔍"
+            FontSize="18"
+            BackgroundColor="Transparent"
+            TextColor="Black"
+            Grid.Column="2"
+            HorizontalOptions="Start"
+            Margin="5,0,5,0"
+
+                    Clicked="OnSearchClicked"/>
+
+            <Label x:Name="lblSearchActive"
+           Text="Filtering..."
+           FontSize="14"
+           TextColor="DarkRed"
+           Grid.Column="3"
+           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+           IsVisible="False"
+           Margin="5,0,5,0"/>
+
+                    <Button x:Name="btnClearSearch"
+            Text="❌"
+            FontSize="18"
+            BackgroundColor="Transparent"
+            TextColor="Black"
+            Grid.Column="4"
+            HorizontalOptions="End"
+                            IsVisible="False"
+            Margin="5,0,5,0"
+            Clicked="OnClearSearchClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>

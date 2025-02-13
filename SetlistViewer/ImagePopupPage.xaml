@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SetlistViewer.ImagePopupPage"
+             BackgroundColor="Gray">
+    <Grid>
+        <Image x:Name="FullSizeImage"
+               Aspect="AspectFit"
+               VerticalOptions="Center"
+               HorizontalOptions="Center" />
+
+        <Button Text="✖"
+                FontSize="24"
+                BackgroundColor="Transparent"
+                TextColor="White"
+                Padding="10"
+                Clicked="OnCloseTapped"
+                VerticalOptions="Start"
+                HorizontalOptions="End"/>
+    </Grid>
+</ContentPage>

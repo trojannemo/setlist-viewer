@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SetlistViewer.AboutPage"
+             Title="About">
+
+    <NavigationPage.HasNavigationBar>False</NavigationPage.HasNavigationBar>
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="20">
+            <Label Text="Setlist Viewer v1.0.1"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+
+            <Label Text="About"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   Margin="0,20,0,0"/>
+
+            <Label x:Name="aboutText"
+                   FontSize="16"
+                   LineBreakMode="WordWrap"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

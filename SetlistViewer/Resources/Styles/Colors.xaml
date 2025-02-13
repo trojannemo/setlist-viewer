@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- 🎨 Primary Theme Colors (Sky Blue & Ivory) -->
+    <Color x:Key="Primary">#87CEEB</Color>
+    <!-- Sky Blue -->
+    <Color x:Key="PrimaryDark">#6BB2D4</Color>
+    <!-- Deeper Sky Blue -->
+    <Color x:Key="PrimaryDarkText">#2C3E50</Color>
+    <!-- Dark Blue-Gray for contrast -->
+
+    <Color x:Key="Secondary">#FAF3E0</Color>
+    <!-- Ivory / Light Beige -->
+    <Color x:Key="SecondaryDarkText">#5D4037</Color>
+    <!-- Soft Brown (for contrast) -->
+    <Color x:Key="Tertiary">#B2EBF2</Color>
+    <!-- Light Aqua Cyan -->
+
+    <!-- 🌞 Light Background Colors -->
+    <Color x:Key="BackgroundLight">#F0F8FF</Color>
+    <!-- Alice Blue -->
+    <Color x:Key="BackgroundAccent">#E3F2FD</Color>
+    <!-- Soft Pastel Blue -->
+    <Color x:Key="BackgroundHeader">#F5F5DC</Color>
+    <!-- Beige (for headers) -->
+
+    <!-- ⚫ Text Colors -->
+    <Color x:Key="TextPrimary">#333333</Color>
+    <!-- Dark Gray (Readable) -->
+    <Color x:Key="TextSecondary">#555555</Color>
+    <!-- Medium Gray -->
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
+
+    <!-- 🎨 Neutral Gray Tones (For Borders & Subtle UI Elements) -->
+    <Color x:Key="Gray100">#F5F5F5</Color>
+    <!-- Light Gray -->
+    <Color x:Key="Gray200">#EEEEEE</Color>
+    <Color x:Key="Gray300">#DDDDDD</Color>
+    <Color x:Key="Gray400">#CCCCCC</Color>
+    <Color x:Key="Gray500">#AAAAAA</Color>
+    <Color x:Key="Gray600">#888888</Color>
+    <Color x:Key="Gray900">#444444</Color>
+    <Color x:Key="Gray950">#222222</Color>
+
+    <!-- 🌟 Brushes for UI Components -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+</ResourceDictionary>

@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- 🎨 Activity Indicator -->
+    <Style TargetType="ActivityIndicator">
+        <Setter Property="Color" Value="{StaticResource Primary}"/>
+    </Style>
+
+    <!-- 🎨 General UI Elements -->
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource Black}"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource White}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray400}"/>
+    </Style>
+
+    <Style TargetType="Frame">
+        <Setter Property="HasShadow" Value="False"/>
+        <Setter Property="BorderColor" Value="{StaticResource Gray300}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource White}"/>
+    </Style>
+
+    <!-- 🎨 Headings -->
+    <Style TargetType="Label" x:Key="Headline">
+        <Setter Property="TextColor" Value="{StaticResource PrimaryDarkText}"/>
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+    </Style>
+
+    <Style TargetType="Label" x:Key="SubHeadline">
+        <Setter Property="TextColor" Value="{StaticResource PrimaryDarkText}"/>
+        <Setter Property="FontSize" Value="18"/>
+    </Style>
+
+    <!-- 🎨 Collection View Styling -->
+    <Style TargetType="CollectionView">
+        <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLight}"/>
+    </Style>
+
+    <!-- 🎨 Alternating Row Colors -->
+    <Style TargetType="Grid" x:Key="LightRowStyle">
+        <Setter Property="BackgroundColor" Value="{StaticResource Gray100}"/>
+    </Style>
+    <Style TargetType="Grid" x:Key="DarkRowStyle">
+        <Setter Property="BackgroundColor" Value="{StaticResource BackgroundAccent}"/>
+    </Style>
+
+    <!-- 🎨 Page Layout -->
+    <Style TargetType="Page">
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLight}"/>
+    </Style>
+
+    <Style TargetType="Shell">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource White}"/>
+        <Setter Property="Shell.TitleColor" Value="{StaticResource TextPrimary}"/>
+        <Setter Property="Shell.UnselectedColor" Value="{StaticResource Gray400}"/>
+        <Setter Property="Shell.NavBarHasShadow" Value="False"/>
+    </Style>
+
+    <Style TargetType="NavigationPage">
+        <Setter Property="BarBackgroundColor" Value="{StaticResource White}"/>
+        <Setter Property="BarTextColor" Value="{StaticResource TextPrimary}"/>
+    </Style>
+
+</ResourceDictionary>

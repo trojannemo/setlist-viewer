@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:SetlistViewer.Helpers"
+             x:Class="SetlistViewer.QueuePage"
+             BackgroundColor="#6CA6CD">
+
+    <NavigationPage.HasNavigationBar>False</NavigationPage.HasNavigationBar>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:RowColorConverter x:Key="RowColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto">
+
+        <Grid Grid.Row="0" BackgroundColor="#F5F5EB" Padding="10"
+      ColumnDefinitions="Auto, *, Auto, Auto, Auto">
+
+            <Label x:Name="lblQueue" Text="Queue"
+           FontSize="24"
+           FontAttributes="Bold"
+           VerticalOptions="Center"
+           HorizontalTextAlignment="Center"
+           Grid.Column="0" />
+
+            <Label x:Name="lblQueueCount"
+           FontSize="16"
+           HorizontalTextAlignment="Center"
+           VerticalOptions="Center"
+           Grid.Column="1" />
+
+            <Button Text="📤" 
+                     FontSize="18"
+                    TextColor="Black"
+                     HorizontalOptions="End"
+                    Clicked="OnShareClicked" 
+                    Grid.Column="2" 
+                    BackgroundColor="Transparent"/>
+
+            <Button Text="📋" 
+                     FontSize="18"
+                    TextColor="Black"
+                     HorizontalOptions="End"
+                     Clicked="OnCopyClicked" 
+                    Grid.Column="3" 
+                    BackgroundColor="Transparent"
+                    />
+
+            <Button Text="❓"
+                FontSize="18"
+                BackgroundColor="Transparent"
+                TextColor="Black"
+                HorizontalOptions="End"
+                Clicked="OnAboutClicked"
+                Grid.Column="4" />
+
+        </Grid>
+
+        <CollectionView x:Name="QueueCollectionView"
+                        Grid.Row="1" Grid.ColumnSpan="2"
+                        SelectionMode="None"
+                        VerticalScrollBarVisibility="Always">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid BackgroundColor="{Binding SongIndex, Converter={StaticResource RowColorConverter}}" Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40*"/>
+                            <ColumnDefinition Width="46*"/>
+                            <ColumnDefinition Width="14*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnSingleTapped" CommandParameter="{Binding}" />
+                            <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnDoubleTapped" CommandParameter="{Binding}" />
+                        </Grid.GestureRecognizers>
+
+
+                        <Label Text="{Binding Artist}" 
+                               LineBreakMode="TailTruncation"
+                            MaxLines="1"    
+                   FontSize="16" 
+                   Grid.Column="0" 
+                   VerticalOptions="Center" HorizontalOptions="Start"/>
+
+
+                        <Label Text="{Binding Name}" 
+                                LineBreakMode="TailTruncation"
+                                MaxLines="1"    
+                                FontSize="16" 
+                                Grid.Column="1" 
+                                VerticalOptions="Center" HorizontalOptions="Start"/>
+
+
+                        <Label Text="{Binding Duration}" 
+                   FontSize="16" 
+                   Grid.Column="2" 
+                   VerticalOptions="Center" HorizontalOptions="Center"/>                        
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
