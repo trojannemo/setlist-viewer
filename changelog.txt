@@ -3,12 +3,21 @@ Developed by TrojanNemo
 © 2025
 -------------------
 
+v1.0.2
+- Added support for loading of .setlist files without needing to export to .json first
+- Added instrument difficulty icons alongside the difficulty tier name on the Details Page
+- Added icons to represent how many vocal parts a song has on the Details Page
+- Replaced text links to Lyrics and Youtube video with icons on the Details page
+- Fixed some typos and out of date text on the About page
+
+----------
+
 v1.0.1 (first GitHub release)
-- fixed alternating row colors not working when filtering or sorting songs on the main page
-- replaced all text buttons with emoji/icon buttons for a more modern look
-- implemented fix that should reduce font size on lower DPI devices to avoid font being too large by default
+- Fixed alternating row colors not working when filtering or sorting songs on the main page
+- Replaced all text buttons with emoji/icon buttons for a more modern look
+- Implemented fix that should reduce font size on lower DPI devices to avoid font being too large by default
 
 ----------
 
 v1.0.0 (was not on GitHub yet)
-Initial public release
+- Initial public release
