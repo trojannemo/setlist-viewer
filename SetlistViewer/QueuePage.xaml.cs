@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SetlistViewer
 {
@@ -111,13 +112,22 @@ namespace SetlistViewer
         private async void OnCopyClicked(object sender, EventArgs e)
         {
             string text = FormatQueueForSharing();
+            if (queueList == null || !queueList.Any())
+            {
+                await DisplayAlert("Setlist Viewer", text, "OK");
+                return;
+            }            
             await Clipboard.Default.SetTextAsync(text);
 
         }
         private async Task ShareQueueAsync()
         {
             string shareText = FormatQueueForSharing();
-
+            if (queueList == null || !queueList.Any())
+            {
+                await DisplayAlert("Setlist Viewer", shareText, "OK");
+                return;
+            }
             await Share.Default.RequestAsync(new ShareTextRequest
             {
                 Text = shareText,

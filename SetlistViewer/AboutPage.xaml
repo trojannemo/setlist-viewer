@@ -8,7 +8,7 @@
     
     <ScrollView>
         <VerticalStackLayout Padding="20">
-            <Label Text="Setlist Viewer v1.0.1"
+            <Label Text="Setlist Viewer v1.0.2"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"/>

@@ -34,20 +34,220 @@ namespace SetlistViewer
                 {
                     SongDetails.Add(item);
                 }
+                OnPropertyChanged(nameof(SongDetails));  // Force UI to rebind
             }
             catch (Exception ex)
             {
                 DisplayAlert("Error", $"Failed to load song:\n{ex.Message}", "OK");
             }
             ResizeFonts();
+            PopulateSongDetails();
         }
 
         private void ResizeFonts()
         {
             lblArtist.FontSize = GetScaledFontSize(GetLabelFontSize(lblArtist));
             lblTitle.FontSize = GetScaledFontSize(GetLabelFontSize(lblTitle));
-            LyricsLabel.FontSize = GetScaledFontSize(GetLabelFontSize(LyricsLabel));
-            YouTubeLink.FontSize = GetScaledFontSize(GetLabelFontSize(YouTubeLink));
+        }
+
+        private void PopulateSongDetails()
+        {
+            detailsContainer.Children.Clear(); // Remove old content
+
+            string GetFullRating(string rating) => rating switch
+            {
+                "SR" => "Supervision Recommended",
+                "FF" => "Family Friendly",
+                "M" => "Mature",
+                "NR" => "Not Rated",
+                _ => rating ?? """N/AbandonedMutexException"""
+            };
+
+            int rowIndex = 0;
+
+            AddRow("Album:", Song.Album ?? "", rowIndex++);
+            AddRow("Track Number:", Song.TrackNumber > 0 ? Song.TrackNumber.ToString() : "", rowIndex++);
+            AddRow("Genre:", !string.IsNullOrEmpty(Song.Genre) ? Song.Genre : "", rowIndex++);
+            AddRow("Subgenre:", !string.IsNullOrEmpty(Song.Subgenre) ? Song.Subgenre : "", rowIndex++);
+            AddRow("Duration:", Song.Duration == "" || Song.Duration == "00:00" ? "" : Song.Duration, rowIndex++);
+            AddRow("Rating:", GetFullRating(Song.Rating), rowIndex++);
+
+            AddVocalPartsRow("Vocal Parts:", Song.VocalParts, rowIndex++);
+            AddDifficultyRow("Drums Difficulty:", Song.DrumsDiff, rowIndex++);
+            AddDifficultyRow("Bass Difficulty:", Song.BassDiff, rowIndex++);
+            AddDifficultyRow("Pro Bass Difficulty:", Song.ProBassDiff, rowIndex++);
+            AddDifficultyRow("Guitar Difficulty:", Song.GuitarDiff, rowIndex++);
+            AddDifficultyRow("Pro Guitar Difficulty:", Song.ProGuitarDiff, rowIndex++);
+            AddDifficultyRow("Keys Difficulty:", Song.KeysDiff, rowIndex++);
+            AddDifficultyRow("Pro Keys Difficulty:", Song.ProKeysDiff, rowIndex++);
+            AddDifficultyRow("Vocals Difficulty:", Song.VocalDiff, rowIndex++);
+            AddDifficultyRow("Band Difficulty:", Song.BandDiff, rowIndex++);
+
+            AddRow("Master Recording:", Song.Master ? "Yes" : "No", rowIndex++);
+        }
+
+        private void AddVocalPartsRow(string key, int vocalParts, int rowIndex)
+        {
+            var row = new Grid
+            {
+                ColumnDefinitions =
+        {
+            new ColumnDefinition { Width = GridLength.Auto },
+            new ColumnDefinition { Width = GridLength.Auto },
+            new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+        },
+                BackgroundColor = (rowIndex % 2 == 0) ? Colors.LightGray : Color.Parse("#E0F7FA"),
+                HeightRequest = 50
+            };
+
+            var keyLabel = new Label
+            {
+                Text = key,
+                FontSize = 16,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(10, 5)
+            };
+
+            string imagePath = vocalParts switch
+            {
+                1 => "mic1.png",
+                2 => "mic2.png",
+                3 => "mic3.png",
+                _ => "micX.png"
+            };
+
+            var vocalImage = new Image
+            {
+                Source = imagePath,                
+                HeightRequest = 36,
+                Aspect = Aspect.AspectFit,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            /*var valueLabel = new Label
+            {
+                Text = $"({vocalParts})",
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(5, 5, 10, 5)
+            };*/
+
+            row.Add(keyLabel, 0, 0);
+            row.Add(vocalImage, 1, 0);
+            //row.Add(valueLabel, 2, 0);
+
+            detailsContainer.Children.Add(row);
+        }
+
+
+        private void AddRow(string key, string value, int rowIndex)
+        {
+            var row = new Grid
+            {
+                ColumnDefinitions =
+        {
+            new ColumnDefinition { Width = GridLength.Auto },  // Key (auto width)
+            new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) } // Value (fills remaining space)
+        },
+                BackgroundColor = (rowIndex % 2 == 0) ? Colors.LightGray : Color.Parse("#E0F7FA"),
+                HeightRequest = 50
+            };
+
+            var keyLabel = new Label
+            {
+                Text = key,
+                FontSize = 16,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(10, 5) // Small margin for alignment
+            };
+
+            var valueLabel = new Label
+            {
+                Text = value,
+                FontSize = 16,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(5, 5, 10, 5)
+            };
+
+            row.Add(keyLabel, 0, 0);
+            row.Add(valueLabel, 1, 0);
+
+            detailsContainer.Children.Add(row);
+        }
+
+        private void AddDifficultyRow(string key, string difficultyText, int rowIndex)
+        {
+            if (string.IsNullOrEmpty(difficultyText) || difficultyText == "N/A")
+            {
+                difficultyText = "No Part";
+            }
+
+            var row = new Grid
+            {
+                ColumnDefinitions =
+        {
+            new ColumnDefinition { Width = GridLength.Auto },
+            new ColumnDefinition { Width = GridLength.Auto },
+            new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+        },
+                BackgroundColor = (rowIndex % 2 == 0) ? Colors.LightGray : Color.Parse("#E0F7FA"),
+                HeightRequest = 50
+            };
+
+            var keyLabel = new Label
+            {
+                Text = key,
+                FontSize = 16,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(10, 5)
+            };
+
+            string imagePath = difficultyText switch
+            {
+                "No Part" => "diff0.png",
+                "Warmup" => "diff1.png",
+                "Apprentice" => "diff2.png",
+                "Solid" => "diff3.png",
+                "Moderate" => "diff4.png",
+                "Challenging" => "diff5.png",
+                "Nightmare" => "diff6.png",
+                "Impossible" => "diff7.png",
+                _ => null
+            };
+
+            var difficultyImage = new Image
+            {
+                Source = imagePath,
+                WidthRequest = 90,
+                HeightRequest = 30,
+                Aspect = Aspect.AspectFit,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            var valueLabel = new Label
+            {
+                Text = $"({difficultyText})",
+                FontSize = 16,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(5, 5, 10, 5)
+            };
+
+            row.Add(keyLabel, 0, 0);
+            if (imagePath != null) row.Add(difficultyImage, 1, 0);
+            if (!difficultyText.Equals("No Part") && imagePath != null)
+            {
+                row.Add(valueLabel, 2, 0);
+            }
+
+            detailsContainer.Children.Add(row);
         }
 
         public static double GetScaledFontSize(double baseSize)
@@ -70,7 +270,7 @@ namespace SetlistViewer
 
             if (!string.IsNullOrEmpty(_youtubeUrl))
             {
-                YouTubeLink.IsVisible = true;
+                imgYouTube.IsVisible = true;
             }
         }
 
@@ -151,7 +351,7 @@ namespace SetlistViewer
 
         private async void OnLyricsTapped(object sender, EventArgs e)
         {
-            if (LyricsLabel.BindingContext is string lyrics)
+            if (imgLyrics.BindingContext is string lyrics)
             {
                 Vibrate();
                 await Navigation.PushAsync(new LyricsPage(Song, lyrics, imgCover.Source));                
@@ -184,8 +384,8 @@ namespace SetlistViewer
             string lyrics = await GetLyricsAsync(artist, title);
             if (!string.IsNullOrEmpty(lyrics))
             {
-                LyricsLabel.IsVisible = true;
-                LyricsLabel.BindingContext = lyrics;
+                imgLyrics.IsVisible = true;
+                imgLyrics.BindingContext = lyrics;
             }
         }
 

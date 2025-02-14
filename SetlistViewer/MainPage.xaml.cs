@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
@@ -11,10 +12,11 @@ namespace SetlistViewer
         private bool isAscending = true;
         private int backPressCount = 0;
         private string _searchQuery = "";
-        private List<SongData> _allSongs = new();
+        private List<SongData> _allSongs = new List<SongData> { };
         public ICommand SortCommand { get; }
         private static readonly string queueFile = Path.Combine(FileSystem.AppDataDirectory, "queue.dat");
         private ObservableCollection<SongData>? queueList { get; set; }
+        private List<SongData> loadedSongs = new List<SongData> { };
 
         public MainPage()
         {
@@ -73,6 +75,8 @@ namespace SetlistViewer
 
         private async void OnSearchClicked(object sender, EventArgs e)
         {
+            if (Songs.Count == 0) return;
+
             string result = await DisplayPromptAsync("Filter", "Enter artist or song name to filter by:");
 
             if (!string.IsNullOrWhiteSpace(result))
@@ -169,22 +173,308 @@ namespace SetlistViewer
             return 0;
         }
 
+        private async Task LoadJSON(string jsonPath)
+        {
+            using var stream = File.OpenRead(jsonPath);
+            using var reader = new StreamReader(stream);
+            var json = await reader.ReadToEndAsync();
+
+            var setlistData = JsonSerializer.Deserialize<SetlistWrapper>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            loadedSongs = setlistData.Setlist;            
+        }
+
+        public string GetConfigString(string raw_line)
+        {
+            if (string.IsNullOrWhiteSpace(raw_line)) return "";
+            var line = raw_line;
+            try
+            {
+                var index = line.IndexOf("=", StringComparison.Ordinal) + 1;
+                line = line.Substring(index, line.Length - index);
+            }
+            catch (Exception)
+            {
+                line = "";
+            }
+            return line.Trim();
+        }
+
+        private static string RemoveControlCharsFromString(string line)
+        {
+            return new string(line.Where(c => !char.IsControl(c)).ToArray());
+        }
+
+        private string ConvertRatingToString(short rating)
+        {
+            return rating switch
+            {
+                1 => "FF",
+                2 => "SR",
+                3 => "M",
+                4 => "NR",
+                _ => "NR" // Default to "NR" if out of range
+            };
+        }
+
+        private string ConvertMillisecondsToDuration(long milliseconds)
+        {
+            TimeSpan time = TimeSpan.FromMilliseconds(milliseconds);
+            return $"{(int)time.TotalMinutes:D2}:{time.Seconds:D2}";
+
+        }
+        private async Task LoadSetlist(string setlistPath)
+        {
+            var SongsGrabbed = new List<SongData>();
+
+            var line = "";
+            var linenum = 5;
+            var sr = new StreamReader(setlistPath, System.Text.Encoding.UTF8);
+            try
+            {
+                int songcount;
+                string format;
+                sr.ReadLine();
+                sr.ReadLine();
+                songcount = Convert.ToInt16(GetConfigString(sr.ReadLine()));
+                sr.ReadLine();
+                format = GetConfigString(sr.ReadLine()).ToLowerInvariant();
+
+                for (var i = 0; i < songcount; i++)
+                {
+                    try
+                    {
+                        SongsGrabbed.Add(new SongData());
+                        var index = SongsGrabbed.Count - 1;
+
+                        //all Setlist Manager cache formats
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Artist = RemoveControlCharsFromString(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Name = RemoveControlCharsFromString(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Album = RemoveControlCharsFromString(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].TrackNumber = Convert.ToInt32(GetConfigString(line));
+                        if (SongsGrabbed[index].TrackNumber == 65535) //Clone Hero bug???
+                        {
+                            SongsGrabbed[index].TrackNumber = 1;
+                        }
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Master = line.Contains("True");
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        var year = Convert.ToInt16(GetConfigString(line));
+                        SongsGrabbed[index].YearRecorded = year < 0 || year > 2100 ? 0 : year;
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        year = Convert.ToInt16(GetConfigString(line));
+                        SongsGrabbed[index].YearReleased = year < 0 || year > 2100 ? 0 : year;
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Genre = GetConfigString(line);
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Rating = ConvertRatingToString(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Gender = GetConfigString(line);
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].VocalParts = Convert.ToInt16(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].DrumsDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].BassDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].ProBassDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].GuitarDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].ProGuitarDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].KeysDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].ProKeysDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].VocalDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].BandDiff = SongsGrabbed[index].GetInstrumentDifficultyName(Convert.ToInt16(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Duration = ConvertMillisecondsToDuration(Convert.ToInt64(GetConfigString(line)));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].ShortName = GetConfigString(line);
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].SongId = Convert.ToInt32(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].Source = GetConfigString(line);
+                        if (string.IsNullOrWhiteSpace(SongsGrabbed[index].Source))
+                        {
+                            SongsGrabbed[index].Source = "dlc";
+                        }
+
+                        if (!format.Contains("2") && !format.Contains("3") && !format.Contains("4") && !format.Contains("5")) continue;
+                        //Setlist Manager cache format 2-4, both RB3 and Blitz
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].FilePath = GetConfigString(line);
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].PreviewStart = Convert.ToInt32(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].PreviewEnd = Convert.ToInt32(GetConfigString(line));
+
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].GameVersion = Convert.ToInt16(GetConfigString(line));
+
+                        if (!format.ToLowerInvariant().Contains("blitz"))
+                        {
+                            //Setlist Manager cache format 2-4, only RB3 
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].ScrollSpeed = Convert.ToInt16(GetConfigString(line));
+
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].TonicNote = Convert.ToInt16(GetConfigString(line));
+
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].Tonality = Convert.ToInt16(GetConfigString(line));
+
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].PercussionBank = GetConfigString(line);
+
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].DrumBank = GetConfigString(line);
+                        }
+
+                        if (!format.Contains("3") && !format.Contains("4") && !format.Contains("5")) continue;
+                        //Setlist Manager cache format 3-4, both RB3 and Blitz
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].DoNotExport = line.Contains("True");
+
+                        if (!format.Contains("4") && !format.Contains("5")) continue;
+                        if (!format.ToLowerInvariant().Contains("blitz"))
+                        {
+                            //Setlist Manager cache format 4-5, only RB3
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].ProBassTuning = GetConfigString(line);
+
+                            //Setlist Manager cache format 4-5, only RB3
+                            line = sr.ReadLine();
+                            linenum++;
+                            SongsGrabbed[index].ProGuitarTuning = GetConfigString(line);
+                        }
+
+                        if (!format.Contains("5")) continue;
+                        //Setlist Manager cache format 5, RB3 and Blitz
+                        line = sr.ReadLine();
+                        linenum++;
+                        SongsGrabbed[index].SongLink = GetConfigString(line);
+
+                        //add further checks for newer cache versions here
+                    }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("Error", "There was a problem loading song #" + (i + 1) + " in Setlist file:\n'" + Path.GetFileName(setlistPath) + "'\n\nThe error says:\n'" +
+                            ex.Message + "'\n\nLine:\t'" + line + "'\nLine #:\t" + linenum + "\n\nSkipping this song...", "OK");
+                        SongsGrabbed.RemoveAt(SongsGrabbed.Count - 1);
+
+                        //calculate how many lines until next song, then read/skip those lines
+                        var lines = (5 + ((i + 1) * 34)) - linenum;
+                        for (var x = 0; x < lines; x++)
+                        {
+                            sr.ReadLine();
+                        }
+                    }
+                }
+                sr.Dispose();                
+            }
+            catch (Exception ex)
+            {
+                sr.Dispose();
+                SongsGrabbed.Clear();
+                await DisplayAlert("Error", "There was a problem loading Setlist '" + Path.GetFileName(setlistPath) + "'\n\nThe error says:\n'" +
+                                ex.Message + "'\n\nTry re-importing if this problem continues", "OK");                
+            }
+
+            loadedSongs = SongsGrabbed;
+        }
+
         private async void LoadSetlistFromFile(string filePath)
         {
             try
             {
                 if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-                    return;
+                    return;                               
 
-                using var stream = File.OpenRead(filePath);
-                using var reader = new StreamReader(stream);
-                var json = await reader.ReadToEndAsync();
-
-                var setlistData = JsonSerializer.Deserialize<SetlistWrapper>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (setlistData?.Setlist != null)
+                if (Path.GetExtension(filePath) == ".json")
                 {
-                    //await DisplayAlert("Debugging", $"Loaded {setlistData.Setlist.Count} songs", "OK");
+                    await LoadJSON(filePath);
+                }
+                else if (Path.GetExtension(filePath) == ".setlist")
+                {
+                    await LoadSetlist(filePath);
+                }
+                else
+                {
+                    await DisplayAlert("Invalid Selection", "That's not a valid .setlist or .json file, try again", "OK");
+                    return;
+                }
+                
+                if (loadedSongs != null && loadedSongs.Count > 0)
+                {
+                    //await DisplayAlert("Debugging", $"Loaded {setlistDataCount} songs", "OK");
                     
                     try
                     {      
@@ -192,7 +482,7 @@ namespace SetlistViewer
                         {
                             List<SongData> temp = new List<SongData>();
                             int index = 0;
-                            foreach (var song in setlistData.Setlist)
+                            foreach (var song in loadedSongs)
                             {
                                 song.SongIndex = index++;
                                 temp.Add(song);
@@ -205,7 +495,7 @@ namespace SetlistViewer
                             try
                             {
                                 listViewSetlist.ItemsSource = null;
-                                _allSongs = setlistData.Setlist;
+                                _allSongs = tempSongs;
                                 Songs.Clear();
                                 foreach (var song in tempSongs)
                                 {
@@ -229,7 +519,7 @@ namespace SetlistViewer
                 }
                 else
                 {
-                    await DisplayAlert("Error", "No valid song data found in that JSON file", "OK");
+                    await DisplayAlert("Error", "No valid song data found in that file", "OK");
                 }
             }
             catch (Exception ex)
@@ -315,14 +605,17 @@ namespace SetlistViewer
         {
             try
             {
+                var allFilesType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                {
+                    { DevicePlatform.Android, new[] { "*/*" } }, // Allow all file types
+                    { DevicePlatform.iOS, new[] { "public.item" } }, // Allow all file types
+                    { DevicePlatform.WinUI, new[] { "*" } } // Windows: "*" allows all extensions
+                });
+
                 var result = await FilePicker.PickAsync(new PickOptions
                 {
-                    PickerTitle = "Select a Setlist JSON file",
-                    FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                { DevicePlatform.Android, new[] { "application/json", ".json" } },
-                { DevicePlatform.iOS, new[] { "public.json" } }
-            })
+                    PickerTitle = "Select a .setlist or .json file",
+                    FileTypes = allFilesType
                 });
 
                 if (result == null) return;
@@ -339,16 +632,18 @@ namespace SetlistViewer
 
         private async void OnAboutClicked(object sender, EventArgs e)
         {
-            var message = "Using Nautilus, export your Setlist to JSON using the 'EVERYTHING'" +
-                " and 'Use tier names' settings, and (somehow) get that JSON file to your device\n\nClick 'Load' to find and load your setlist" +
-                " JSON file\n\nSingle tap on a song to open the Song Details page\nDouble tap on a song to add it to the queue" +
+            var message = "This is a companion app to Nautilus' Setlist Manager\n\nYou can either work with your existing .setlist file (which contains" +
+                " everything Setlist Manager has for your Setlist) or you can export your Setlist to JSON using the 'EVERYTHING'" +
+                " and 'Use tier names' settings, and (somehow) get that .setlist or .json file to your device\n\nClick the load file icon to find and load " +
+                "your setlist file\n\nSingle tap on a song to open the Song Details page\nDouble tap on a song to add it to the queue" +
                 "\n\nIn the Song Details page, Setlist Viewer will try to download album art and lyrics for your song - if they're available, " +
-                "the album art will show and a 'Lyrics' label will appear, click on that to view the song lyrics in the Lyrics page\nClick on the album" +
-                " art to view it full screen\nSetlist Viewer will also try to find a matching YouTube video and if it finds out, will display" +
-                " a link so you can click to open on the YouTube app\n\nBack on the Main page, click on 'Queue' to open the Queue page - see that About button for instructions" +
-                "\nClick on 'Search' to search through Artists and Song Titles and filter by your search pattern\nClick on 'Clear' to reset your filter" +
-                " and show all songs\nYou can sort the information displayed by clicking on the headers, click once for Ascending order and click " +
-                "again for Descending order" +
+                "the album art will load and a 'Lyrics' label will appear, click on that to view the song lyrics in the Lyrics page\nClick on the album" +
+                " art to view it full screen\nSetlist Viewer will also try to find a matching YouTube video and if it finds one, it will display" +
+                " a link so you can open it on the YouTube app\n\nBack on the Main page, click on the queue icon to open the Queue page - see " +
+                "that question mark icon for further instructions" +
+                "\nClick on the search icon to search through Artists and Song Titles and filter by your search pattern\nClick on the red X icon to" +
+                " reset your search filter and show all songs available\nYou can sort the songs displayed by clicking on the headers, click once " +
+                "for Ascending order and click again for Descending order" +
                 "\n\nAlbum Art API by last.fm" +
                 "\nLyrics API by Lyrics.ovh" +
                 "\nYouTube API by Google" +

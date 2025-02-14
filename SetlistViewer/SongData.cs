@@ -115,8 +115,51 @@
         [JsonPropertyName("guitar_tuning")]
         public string GuitarTuning { get; set; }
 
+        public string Gender { get; set; }
+
+        public int GameVersion { get; set; }
+
+        public bool DoNotExport { get; set; }
+
+        public string ProBassTuning { get; set; }
+
+        public string ProGuitarTuning { get; set; }
+
+        public string SongLink { get; set; }
+
         public int SongIndex { get; set; }
+
+        public string GetInstrumentDifficultyName(int diff)
+        {
+            var difficulty = "No Part";
+            switch (diff)
+            {
+                case 0:
+                    difficulty = "No Part";
+                    break;
+                case 1:
+                    difficulty = "Warmup";
+                    break;
+                case 2:
+                    difficulty = "Apprentice";
+                    break;
+                case 3:
+                    difficulty = "Solid";
+                    break;
+                case 4:
+                    difficulty = "Moderate";
+                    break;
+                case 5:
+                    difficulty = "Challenging";
+                    break;
+                case 6:
+                    difficulty = "Nightmare";
+                    break;
+                case 7:
+                    difficulty = "Impossible";
+                    break;
+            }
+            return difficulty;
+        }
     }
-
-
 }
