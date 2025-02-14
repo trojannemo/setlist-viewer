@@ -3,7 +3,7 @@ Developed by TrojanNemo<br>
 © 2025<br>
 <br>
 This is a very simple .NET MAUI application for Android (iOS should come at some point) designed to be a companion app to Nautilus' Setlist Manager (Nautilus can be found <a href="https://github.com/trojannemo/Nautilus">here</a>).<br>
-By itself Setlist Viewer can't do anything - it requires a Setlist JSON file that Nautilus' Setlist Manager creates.<br>
+By itself Setlist Viewer can't do anything - it requires a Setlist that Nautilus' Setlist Manager creates, either in the native .setist format or the web-friendly .json format.<br>
 <br>
 Did I say this is a <b>SIMPLE</b> application? I'm putting it on GitHub so others who have given me ideas that are beyond my current abilities can help and contribute.<br>
 <br>
