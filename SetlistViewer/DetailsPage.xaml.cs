@@ -427,7 +427,7 @@ namespace SetlistViewer
         {
             try
             {
-                string apiKey = "AIzaSyCXot_3Xst_jWQ94gB0P2ZBRMg3z52SG2Y"; //please get your own
+                string apiKey = "YOUTUBE_API_KEY"; //please get your own
                 string query = Uri.EscapeDataString($"{artist} {title} music");
                 string url = $"https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q={query}&key={apiKey}";
 
@@ -451,7 +451,7 @@ namespace SetlistViewer
         {
             try
             {
-                string apiKey = "6b579e4522f9846c88cf88b6a44564f5"; //please get your own
+                string apiKey = "LAST.FM_API_KEY"; //please get your own
                 string url = $"https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key={apiKey}&artist={Uri.EscapeDataString(artist)}&album={Uri.EscapeDataString(album)}&format=json";
 
                 using HttpClient client = new HttpClient();
