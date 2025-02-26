@@ -1,19 +1,56 @@
-# Setlist Viewer<br>
-Developed by TrojanNemo<br>
-© 2025<br>
-<br>
-This is a very simple .NET MAUI application for Android (iOS should come at some point) designed to be a companion app to Nautilus' Setlist Manager (Nautilus can be found <a href="https://github.com/trojannemo/Nautilus">here</a>).<br>
-By itself Setlist Viewer can't do anything - it requires a Setlist that Nautilus' Setlist Manager creates, either in the native .setlist format or the web-friendly .json format.<br>
-<br>
-Did I say this is a <b>SIMPLE</b> application? I'm putting it on GitHub so others who have given me ideas that are beyond my current abilities can help and contribute.<br>
-<br>
-Setlist Viewer was created using .NET 8 (LTS) and .NET MAUI in Visual Studio 2022 - you should probably be on the same if you want to work on Setlist Viewer yourself.<br>
-<br>
-# How To Install<br>
-This is distributed as a signed Android APK file - you will need to download it to your Android device, make sure you enable 'Install applications from unknown sources' and then use a file manager to locate the APK and click on it to install.<br>
-<br>
-Click on the ? buttons found in Setlist Viewer for information on how to use - but it should be self explanatory.<br>
-<br>
-If you find any bugs or want me to add features (keep in mind my technical limitations) then raise an issue here or find me on Discord and message me there.<br>
-<br>
-TrojanNemo
+# 🎵 Setlist Viewer
+
+**Developed by TrojanNemo**  
+© 2025  
+
+---
+
+## **📌 About**
+**Setlist Viewer** is a **simple .NET MAUI application** for **Android** *(iOS support planned in the future)*.  
+
+This app is a **companion to Nautilus' Setlist Manager**, which can be found **[here](https://github.com/trojannemo/Nautilus)**.  
+
+🔹 **By itself, Setlist Viewer cannot function**—it requires a **Setlist file** created by **Nautilus' Setlist Manager**, either in:
+- The native **`.setlist`** format  
+- The web-friendly **`.json`** format  
+
+🚀 **I'm sharing this on GitHub so others can contribute**, especially those with ideas beyond my current abilities!  
+
+---
+
+## **🛠️ Built With**
+✅ **.NET 8 (LTS)**  
+✅ **.NET MAUI**  
+✅ **Visual Studio 2022**  
+
+*(You should use the same environment if you want to work on Setlist Viewer yourself.)*  
+
+---
+
+## **📥 How to Install**
+📱 **Setlist Viewer is distributed as a signed Android APK file**.  
+To install it on your device:  
+
+1️⃣ **Download the APK file** to your Android device.  
+2️⃣ **Enable "Install applications from unknown sources"** in your device settings.  
+3️⃣ Use a **file manager** to locate the APK.  
+4️⃣ **Tap the APK file** to install it.  
+
+---
+
+## **❓ How to Use**
+- Click the **"?"** buttons within the app for guidance.  
+- The interface is **straightforward and intuitive**—you'll figure it out!  
+
+---
+
+## **🐞 Found a Bug? Have a Feature Request?**
+If you encounter **bugs** or have **feature requests** *(keeping in mind my technical limitations)*:  
+✅ **Raise an issue here on GitHub**  
+✅ **Find me on Discord & send me a message**  
+
+---
+
+### **🚀 Enjoy using Setlist Viewer!** 🎶🔥  
+
+- TrojanNemo
